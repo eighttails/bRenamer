@@ -30,6 +30,6 @@ else:unix: LIBS += -L$$OUT_PWD/../RenamerCore/ -lRenamerCore
 INCLUDEPATH += $$PWD/../RenamerCore
 DEPENDPATH += $$PWD/../RenamerCore
 
-win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../RenamerCore/release/RenamerCore.lib
-else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../RenamerCore/debug/RenamerCore.lib
+win32:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../RenamerCore/release/libRenamerCore.a
+else:win32:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../RenamerCore/debug/libRenamerCore.a
 else:unix:!symbian: PRE_TARGETDEPS += $$OUT_PWD/../RenamerCore/libRenamerCore.a
