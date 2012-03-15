@@ -24,28 +24,64 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------*/
 
-#ifndef RENAMEMETHOD_H
-#define RENAMEMETHOD_H
+#include <QRegExp>
+#include <QStringList>
+#include "sequencemethod.h"
 
-#include <QObject>
-
-class RenameMethod : public QObject
+SequenceMethod::SequenceMethod(QObject *parent) :
+    RenameMethod(parent),
+    origin_(INT_MIN),
+    digits_(INT_MIN),
+    currentNum_(INT_MIN)
 {
-    Q_OBJECT
-public:
-    explicit RenameMethod(QObject *parent = 0);
+}
 
-    /*元ファイル名とクエリ文字列から、リネーム後のファイル名を返す。*/
-    /*クエリ文字列は正規表現を用いた置換の場合に参照する。*/
-    virtual QString rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString) = 0;
+void SequenceMethod::reset()
+{
+    origin_ = INT_MIN;
+    digits_ = INT_MIN;
+    currentNum_ = INT_MIN;
+}
 
-    /*状態を持つ置換方式については、一括置換の実行ごとに状態をリセットする。*/
-    virtual void reset() {};
+QString SequenceMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
+{
+    /*置換リテラルと桁数を検出*/
+    const QString format = "<s(\\d*),{0,1}(\\d*)>";
+    QRegExp regExp(format);
+    regExp.setCaseSensitivity(Qt::CaseInsensitive);
+    int pos = 0;
+    regExp.indexIn(fileName, pos);
 
-signals:
+    /*桁数を決定*/
+    if(digits_ == INT_MIN){
+        if(regExp.cap(1) != ""){
+            digits_ = regExp.cap(1).toInt();
+        } else {
+            digits_ = 1;
+        }
+    }
+    /*オリジンを決定*/
+    if(origin_ == INT_MIN){
+        if(regExp.cap(2) != ""){
+            origin_ = regExp.cap(2).toInt();
+        } else {
+            origin_ = 1;
+        }
+        /*初期値を設定*/
+        currentNum_ = origin_;
+    }
 
-public slots:
+    QString renamed = fileName;
 
-};
+    /*先頭を0で埋める*/
+    QString seqStr = QString::number(currentNum_);
+    while(seqStr.length() < digits_)
+        seqStr.prepend("0");
 
-#endif // RENAMEMETHOD_H
+    renamed.replace(QRegExp(format), seqStr);
+    currentNum_++;
+
+    return renamed;
+
+}
+

@@ -31,6 +31,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ui_mainwindow.h"
 #include "query.h"
 #include "regexpmethod.h"
+#include "sequencemethod.h"
 #include "renamecommand.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -44,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     /*クエリ生成*/
     QList<RenameMethod*> methods;
     methods.append(new RegExpMethod());
+    methods.append(new SequenceMethod());
     query_ = new Query(this, methods);
 
     /*検索対象パスを設定*/

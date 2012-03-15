@@ -46,6 +46,10 @@ Query::~Query(){
 
 QList<Rename> Query::getRenameList(QString rootPath, QString query, QString renameString)
 {
+    /*メソッドの状態をリセット*/
+    foreach(RenameMethod* method, methods_){
+        method->reset();
+    }
     QList<Rename> list;
     getRenameListInternal(list, rootPath, query, renameString);
     return list;

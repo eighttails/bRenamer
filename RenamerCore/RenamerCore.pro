@@ -15,7 +15,8 @@ SOURCES += renamercore.cpp \
     queryassistant.cpp \
     query.cpp \
     rename.cpp \
-    renamecommand.cpp
+    renamecommand.cpp \
+    sequencemethod.cpp
 
 HEADERS += renamercore.h \
     renamemethod.h \
@@ -24,7 +25,8 @@ HEADERS += renamercore.h \
     queryassistant.h \
     query.h \
     rename.h \
-    renamecommand.h
+    renamecommand.h \
+    sequencemethod.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib
@@ -33,5 +35,3 @@ unix:!symbian {
     }
     INSTALLS += target
 }
-
-

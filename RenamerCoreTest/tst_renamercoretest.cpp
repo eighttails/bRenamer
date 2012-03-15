@@ -29,6 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QtGui/QFileSystemModel>
 #include "query.h"
 #include "regexpmethod.h"
+#include "sequencemethod.h"
 #include "dummymethod.h"
 #include "renamecommand.h"
 
@@ -42,7 +43,8 @@ private:
 private Q_SLOTS:
     void cleanup();
     void regExpQueryTest1();
-    void regExpMrthodTest1();
+    void regExpMethodTest1();
+    void sequenceMethodTest1();
     void renameCommandTest1();
 private:
     QString testPath_;
@@ -156,9 +158,9 @@ void RenamerCoreTest::regExpQueryTest1()
     }
 }
 
-void RenamerCoreTest::regExpMrthodTest1()
+void RenamerCoreTest::regExpMethodTest1()
 {
-    testPath_ = QDir::tempPath() + "/regExpMrthodTest1";
+    testPath_ = QDir::tempPath() + "/regExpMethodTest1";
     deleteFolder(testPath_);
     QDir tmp = QDir::temp();
     tmp.mkpath(testPath_);
@@ -180,6 +182,64 @@ void RenamerCoreTest::regExpMrthodTest1()
         QVERIFY(list[i++].to_ == "CCC1.txt");
         QVERIFY(list[i++].to_ == "folderCCC");
         QVERIFY(list[i++].to_ == "folderCCC2");
+    }
+}
+
+void RenamerCoreTest::sequenceMethodTest1()
+{
+    testPath_ = QDir::tempPath() + "/sequenceMethodTest1";
+    deleteFolder(testPath_);
+    QDir tmp = QDir::temp();
+    tmp.mkpath(testPath_);
+    tmp.mkpath(testPath_ + "/folderAAA");
+    tmp.mkpath(testPath_ + "/folderBBB");
+    tmp.mkpath(testPath_ + "/folderBBB/folderAAA2");
+    createFile(testPath_ + "/folderAAA/AAA1.txt");
+    createFile(testPath_ + "/AAA2.txt");
+
+    QList<RenameMethod*> methods;
+    methods.append(new RegExpMethod());
+    methods.append(new SequenceMethod());
+    Query q(this, methods);
+    {
+        q.setRecursive(true);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s>_\\2");
+        QVERIFY(list.count() == 4);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC_1_2.txt");
+        QVERIFY(list[i++].to_ == "CCC_2_1.txt");
+        QVERIFY(list[i++].to_ == "folderCCC_3_");
+        QVERIFY(list[i++].to_ == "folderCCC_4_2");
+    }
+    {
+        q.setRecursive(true);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s3>_\\2");
+        QVERIFY(list.count() == 4);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC_001_2.txt");
+        QVERIFY(list[i++].to_ == "CCC_002_1.txt");
+        QVERIFY(list[i++].to_ == "folderCCC_003_");
+        QVERIFY(list[i++].to_ == "folderCCC_004_2");
+    }
+    {
+        q.setRecursive(true);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s,3>_\\2");
+        QVERIFY(list.count() == 4);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC_3_2.txt");
+        QVERIFY(list[i++].to_ == "CCC_4_1.txt");
+        QVERIFY(list[i++].to_ == "folderCCC_5_");
+        QVERIFY(list[i++].to_ == "folderCCC_6_2");
+    }
+    {
+        q.setRecursive(true);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s2,99>_\\2");
+        QVERIFY(list.count() == 4);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC_99_2.txt");
+        QVERIFY(list[i++].to_ == "CCC_100_1.txt");
+        QVERIFY(list[i++].to_ == "folderCCC_101_");
+        QVERIFY(list[i++].to_ == "folderCCC_102_2");
     }
 }
 
@@ -215,5 +275,6 @@ void RenamerCoreTest::renameCommandTest1()
     }
 }
 QTEST_MAIN(RenamerCoreTest)
+
 
 #include "tst_renamercoretest.moc"
