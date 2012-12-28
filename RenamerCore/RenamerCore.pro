@@ -16,7 +16,8 @@ SOURCES += renamercore.cpp \
     query.cpp \
     rename.cpp \
     renamecommand.cpp \
-    sequencemethod.cpp
+    sequencemethod.cpp \
+    parentfoldermethod.cpp
 
 HEADERS += renamercore.h \
     renamemethod.h \
@@ -26,7 +27,8 @@ HEADERS += renamercore.h \
     query.h \
     rename.h \
     renamecommand.h \
-    sequencemethod.h
+    sequencemethod.h \
+    parentfoldermethod.h
 unix:!symbian {
     maemo5 {
         target.path = /opt/usr/lib

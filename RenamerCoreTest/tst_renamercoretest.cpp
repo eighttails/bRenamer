@@ -30,6 +30,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "query.h"
 #include "regexpmethod.h"
 #include "sequencemethod.h"
+#include "parentfoldermethod.h"
 #include "dummymethod.h"
 #include "renamecommand.h"
 
@@ -45,6 +46,7 @@ private Q_SLOTS:
     void regExpQueryTest1();
     void regExpMethodTest1();
     void sequenceMethodTest1();
+    void parentFolderMethodTest1();
     void renameCommandTest1();
 private:
     QString testPath_;
@@ -240,6 +242,60 @@ void RenamerCoreTest::sequenceMethodTest1()
         QVERIFY(list[i++].to_ == "CCC_100_1.txt");
         QVERIFY(list[i++].to_ == "folderCCC_101_");
         QVERIFY(list[i++].to_ == "folderCCC_102_2");
+    }
+}
+
+void RenamerCoreTest::parentFolderMethodTest1()
+{
+    testPath_ = QDir::tempPath() + "/parentFolderMethodTest1";
+    deleteFolder(testPath_);
+    QDir tmp = QDir::temp();
+    tmp.mkpath(testPath_);
+    tmp.mkpath(testPath_ + "/folder000/folderAAA");
+    tmp.mkpath(testPath_ + "/folder000/folderBBB");
+    tmp.mkpath(testPath_ + "/folder000/folderBBB/folderAAA2");
+    createFile(testPath_ + "/folder000/folderAAA/AAA1.txt");
+    createFile(testPath_ + "/folder000/AAA2.txt");
+
+    QList<RenameMethod*> methods;
+    methods.append(new RegExpMethod());
+    methods.append(new ParentFolderMethod());
+    Query q(this, methods);
+    {
+        q.setRecursive(true);
+        q.setSubject(Query::FILE);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p>_\\2");
+        QVERIFY(list.count() == 2);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC_folder000_2.txt");
+        QVERIFY(list[i++].to_ == "CCC_folderAAA_1.txt");
+    }
+    {
+        q.setRecursive(true);
+        q.setSubject(Query::FILE);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p2>_\\2");
+        QVERIFY(list.count() == 2);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC_parentFolderMethodTest1_2.txt");
+        QVERIFY(list[i++].to_ == "CCC_folder000_1.txt");
+    }
+    {
+        q.setRecursive(true);
+        q.setSubject(Query::FILE);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p1>_<p2>_\\2");
+        QVERIFY(list.count() == 2);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC_folder000_parentFolderMethodTest1_2.txt");
+        QVERIFY(list[i++].to_ == "CCC_folderAAA_folder000_1.txt");
+    }
+    {
+        q.setRecursive(true);
+        q.setSubject(Query::FILE);
+        QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p20>_\\2");
+        QVERIFY(list.count() == 2);
+        int i = 0;
+        QVERIFY(list[i++].to_ == "CCC__2.txt");
+        QVERIFY(list[i++].to_ == "CCC__1.txt");
     }
 }
 

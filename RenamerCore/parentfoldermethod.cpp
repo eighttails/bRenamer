@@ -23,75 +23,47 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------*/
-
 #include <QRegExp>
-#include <QStringList>
-#include "sequencemethod.h"
+#include <QDir>
+#include "parentfoldermethod.h"
 
-SequenceMethod::SequenceMethod(QObject *parent) :
-    RenameMethod(parent),
-    origin_(INT_MIN),
-    digits_(INT_MIN),
-    currentNum_(INT_MIN)
+ParentFolderMethod::ParentFolderMethod(QObject *parent) :
+    RenameMethod(parent)
 {
 }
 
-void SequenceMethod::reset()
+QString ParentFolderMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
 {
-    origin_ = INT_MIN;
-    digits_ = INT_MIN;
-    currentNum_ = INT_MIN;
-}
-
-QString SequenceMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
-{
-
-
-    /*置換リテラルと桁数を検出*/
-    const QString format = "<s(\\d*),{0,1}(\\d*)>";
+    const QString format = "<p(\\d*)>";
     QRegExp regExp(format);
     regExp.setCaseSensitivity(Qt::CaseInsensitive);
     int pos = 0;
     pos = regExp.indexIn(fileName, pos);
     if(pos == -1) return fileName;
 
-    /*桁数を決定*/
-    if(digits_ == INT_MIN){
-        if(regExp.cap(1) != ""){
-            digits_ = regExp.cap(1).toInt();
-        } else {
-            digits_ = 1;
-        }
-    }
-    /*オリジンを決定*/
-    if(origin_ == INT_MIN){
-        if(regExp.cap(2) != ""){
-            origin_ = regExp.cap(2).toInt();
-        } else {
-            origin_ = 1;
-        }
-        /*初期値を設定*/
-        currentNum_ = origin_;
+    int hierarchy = 1;
+    /*遡る階層数を決定*/
+    if(regExp.cap(1) != ""){
+        hierarchy = regExp.cap(1).toInt();
     }
 
-    /*前回処理したパス。連番はフォルダごとに振る*/
-    static QString prevPath;
-    if(prevPath != path){
-        currentNum_ = origin_;
-        prevPath = path;
+    QString parentPath = path;
+    for (int i = 0; i < hierarchy - 1; i++){
+        parentPath += QDir::separator() + QString("..");
+    }
+
+    QString parentFolder;
+    QDir dir(QDir(parentPath).canonicalPath());
+    if(dir.exists()){
+        parentFolder = dir.dirName();
+    } else {
+        //親フォルダが存在しない場合は空文字を返す
+        parentFolder = "";
     }
 
     QString renamed = fileName;
+    renamed.replace(QRegExp(regExp.cap(0)), parentFolder);
 
-    /*先頭を0で埋める*/
-    QString seqStr = QString::number(currentNum_);
-    while(seqStr.length() < digits_)
-        seqStr.prepend("0");
-
-    renamed.replace(QRegExp(format), seqStr);
-    currentNum_++;
-
-    return renamed;
-
+    // 同一置換文字列内に複数の<f>リテラルがあった場合に対処するため、再帰処理にする。
+    return rename(path, renamed, query, caseSensitive, renameString);
 }
-
