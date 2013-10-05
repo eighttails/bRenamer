@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += testlib
-QT       += gui
+QT       += gui widgets
 
 TARGET = tst_renamercoretest
 CONFIG   += console

@@ -26,7 +26,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
-#include <QtGui/QFileSystemModel>
+#include <QtWidgets/QFileSystemModel>
 #include "query.h"
 #include "regexpmethod.h"
 #include "sequencemethod.h"

@@ -7,6 +7,7 @@
 TARGET = RenamerCore
 TEMPLATE = lib
 CONFIG += staticlib
+QT += core gui widgets
 
 SOURCES += renamercore.cpp \
     renamemethod.cpp \

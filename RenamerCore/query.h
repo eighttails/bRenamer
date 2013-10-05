@@ -46,7 +46,6 @@ class Query : public QObject
     Q_PROPERTY(bool Recursive READ isRecursive WRITE setRecursive)
     Q_PROPERTY(RenameSubject RenameSubject READ subject WRITE setSubject)
     Q_PROPERTY(QRegExp::PatternSyntax PatternSyntax READ patternSyntax WRITE setPatternSyntax)
-    Q_ENUMS(QRegExp::PatternSyntax)
 
 public:
     /*リネーム対象。フォルダー、ファイル、またはその両方*/
