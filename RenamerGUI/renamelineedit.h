@@ -23,25 +23,20 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------*/
+#ifndef RENAMELINEEDIT_H
+#define RENAMELINEEDIT_H
 
-#include "dummymethod.h"
+#include <QLineEdit>
 
-DummyMethod::DummyMethod(QObject *parent)
-    : RenameMethod(parent)
+class RenameLineEdit : public QLineEdit
 {
-}
+	Q_OBJECT
+public:
+	RenameLineEdit(QWidget *parent = nullptr);
+public slots:
+	void insertAssist();
+protected:
+	virtual void contextMenuEvent(QContextMenuEvent *event) override;
+};
 
-QString DummyMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
-{
-    Q_UNUSED(path)
-    Q_UNUSED(query)
-    Q_UNUSED(caseSensitive)
-    Q_UNUSED(renameString)
-    return fileName;
-}
-
-
-QList<RenameAssistant *> DummyMethod::getRenameAssistants()
-{
-	return QList<RenameAssistant *>();
-}
+#endif // RENAMELINEEDIT_H

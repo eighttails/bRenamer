@@ -26,7 +26,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QRegExp>
 #include <QDir>
 #include "parentfoldermethod.h"
-
+#include "renameassistant.h"
 ParentFolderMethod::ParentFolderMethod(QObject *parent) :
     RenameMethod(parent)
 {
@@ -66,4 +66,12 @@ QString ParentFolderMethod::rename(QString path, QString fileName, QString query
 
     // 同一置換文字列内に複数の<f>リテラルがあった場合に対処するため、再帰処理にする。
     return rename(path, renamed, query, caseSensitive, renameString);
+}
+
+
+QList<RenameAssistant *> ParentFolderMethod::getRenameAssistants()
+{
+	QList<RenameAssistant *> list;
+	list.append(new RenameAssistant("親フォルダ名:1階層上", "<p1>"));
+	return list;
 }

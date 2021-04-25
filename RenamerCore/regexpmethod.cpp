@@ -26,6 +26,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QRegExp>
 #include "regexpmethod.h"
+#include "renameassistant.h"
 
 RegExpMethod::RegExpMethod(QObject *parent) :
     RenameMethod(parent)
@@ -40,4 +41,12 @@ QString RegExpMethod::rename(QString path, QString fileName, QString query, bool
     QString renamed = fileName;
     renamed.replace(regExp, renameString);
     return renamed;
+}
+
+
+QList<RenameAssistant *> RegExpMethod::getRenameAssistants()
+{
+	QList<RenameAssistant *> list;
+	list.append(new RenameAssistant("正規表現:1番目のマッチ", "\\1"));
+	return list;
 }

@@ -53,7 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	methods.append(new SequenceMethod());
 	methods.append(new ParentFolderMethod());
 	query_ = new Query(this, methods);
-	query_->queryAssistants().append(new QueryAssistant("拡張子が.txtのファイル", "(.*)\\.txt"));
+	query_->queryAssistants().append(new QueryAssistant("拡張子が.txtのファイル", "(.*)\\.txt", query_));
 
 	// 検索対象パスを設定
 	QString homePath = QDir::homePath();

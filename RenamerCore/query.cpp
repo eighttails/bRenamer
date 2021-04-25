@@ -36,6 +36,7 @@ Query::Query(QObject *parent, QList<RenameMethod*> methods) :
     methods_(methods),
     patternSyntax_(QRegExp::RegExp2)
 {
+	createRenameAssistantsList(methods);
 }
 
 Query::~Query(){
@@ -85,6 +86,14 @@ void Query::getRenameListInternal(QList<Rename>& list, QString parentPath, QStri
             }
             list.append(rename);
         }
-    }
+	}
+}
+
+void Query::createRenameAssistantsList(QList<RenameMethod *> methods)
+{
+	foreach(RenameMethod* method, methods){
+		auto assistants = method->getRenameAssistants();
+		this->renameAssistants_.append(assistants);
+	}
 }
 

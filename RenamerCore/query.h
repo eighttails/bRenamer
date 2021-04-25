@@ -33,6 +33,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMetaEnum>
 
 #include "queryassistant.h"
+#include "renameassistant.h"
 #include "rename.h"
 #include "renamemethod.h"
 
@@ -64,6 +65,7 @@ public:
 	const RenameSubject subject() const {return subject_; }
 	QRegExp::PatternSyntax patternSyntax() const { return patternSyntax_; }
 	QList<QueryAssistant*>& queryAssistants() { return queryAssistants_; }
+	QList<RenameAssistant*>& renameAssistants() { return renameAssistants_; }
 
 signals:
 
@@ -78,6 +80,7 @@ public slots:
     void setPatternSyntax(QRegExp::PatternSyntax patternSyntax) { patternSyntax_ = patternSyntax; }
 protected:
     void getRenameListInternal(QList<Rename>& list, QString parentPath, QString query, QString renameString);
+	void createRenameAssistantsList(QList<RenameMethod*> methods);
 
 	bool caseSensitive_; // 大文字小文字を区別する
 	bool recursive_; // フォルダを再帰的に処理する
@@ -85,6 +88,9 @@ protected:
 
 	// クエリ書式に関するヘルプ文字列のリスト
     QList<QueryAssistant*> queryAssistants_;
+
+	// 変換書式に関するヘルプ文字列のリスト
+	QList<RenameAssistant*> renameAssistants_;
 
 	// リネーム処理クラスのリスト
     QList<RenameMethod*> methods_;

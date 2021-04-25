@@ -12,10 +12,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-        querylineedit.cpp
+        querylineedit.cpp \
+        renamelineedit.cpp
 
 HEADERS  += mainwindow.h \
-    querylineedit.h
+    querylineedit.h \
+    renamelineedit.h
 
 FORMS    += mainwindow.ui
 

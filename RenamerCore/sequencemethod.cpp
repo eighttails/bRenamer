@@ -27,6 +27,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QRegExp>
 #include <QStringList>
 #include "sequencemethod.h"
+#include "renameassistant.h"
 
 SequenceMethod::SequenceMethod(QObject *parent) :
     RenameMethod(parent),
@@ -97,3 +98,14 @@ QString SequenceMethod::rename(QString path, QString fileName, QString query, bo
 
 }
 
+
+
+QList<RenameAssistant *> SequenceMethod::getRenameAssistants()
+{
+	QList<RenameAssistant *> list;
+	list.append(new RenameAssistant("連番", "<s>"));
+	list.append(new RenameAssistant("連番:10から開始", "<s,10>"));
+	list.append(new RenameAssistant("連番:3桁0埋め", "<s3>"));
+	list.append(new RenameAssistant("連番:3桁0埋め、100から開始", "<s3,100>"));
+	return list;
+}

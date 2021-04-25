@@ -8,6 +8,7 @@ class DummyMethod : public RenameMethod
 public:
     explicit DummyMethod(QObject *parent = 0);
     virtual QString rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString);
+	virtual QList<RenameAssistant *> getRenameAssistants() override;
 };
 
 #endif // DUMMYMETHOD_H

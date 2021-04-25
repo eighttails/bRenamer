@@ -33,12 +33,19 @@ class RenameAssistant : public QObject
 {
     Q_OBJECT
 public:
-    explicit RenameAssistant(QObject *parent = 0);
+	explicit RenameAssistant(const QString& description,
+							 const QString& expression,
+							 QObject *parent = 0);
 
-signals:
+	QString description() const;
+	void setDescription(const QString &description);
 
-public slots:
+	QString expression() const;
+	void setExpression(const QString &expression);
 
+private:
+	QString description_;
+	QString expression_;
 };
 
 #endif // RENAMEASSISTANT_H

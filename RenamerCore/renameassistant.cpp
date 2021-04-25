@@ -26,7 +26,31 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "renameassistant.h"
 
-RenameAssistant::RenameAssistant(QObject *parent) :
-    QObject(parent)
+RenameAssistant::RenameAssistant(const QString& description,
+								 const QString& expression,
+								 QObject *parent)
+	: QObject(parent)
+	, description_(description)
+	, expression_(expression)
 {
+}
+
+QString RenameAssistant::description() const
+{
+	return description_;
+}
+
+void RenameAssistant::setDescription(const QString &description)
+{
+	description_ = description;
+}
+
+QString RenameAssistant::expression() const
+{
+	return expression_;
+}
+
+void RenameAssistant::setExpression(const QString &expression)
+{
+	expression_ = expression;
 }

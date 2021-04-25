@@ -23,25 +23,37 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------*/
+#include <QMenu>
+#include <QContextMenuEvent>
+#include "renamelineedit.h"
+#include "querylineedit.h"
+#include "mainwindow.h"
+#include "query.h"
 
-#include "dummymethod.h"
-
-DummyMethod::DummyMethod(QObject *parent)
-    : RenameMethod(parent)
+RenameLineEdit::RenameLineEdit(QWidget *parent)
+	: QLineEdit(parent)
 {
+
 }
 
-QString DummyMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
+void RenameLineEdit::insertAssist()
 {
-    Q_UNUSED(path)
-    Q_UNUSED(query)
-    Q_UNUSED(caseSensitive)
-    Q_UNUSED(renameString)
-    return fileName;
+	// 正規表現の入力補助
+	QAction* action = qobject_cast<QAction*>(sender());
+	QString expression = action->data().toString();
+	this->insert(expression);
 }
 
-
-QList<RenameAssistant *> DummyMethod::getRenameAssistants()
+void RenameLineEdit::contextMenuEvent(QContextMenuEvent *event)
 {
-	return QList<RenameAssistant *>();
+	QSharedPointer<QMenu> menu(createStandardContextMenu());
+	menu->addSeparator();
+	QMenu* assistMenu = menu->addMenu("入力補助");
+	MainWindow* window = qobject_cast<MainWindow*>(this->window());
+	foreach(auto assistant, window->query()->renameAssistants()){
+		QAction* action = assistMenu->addAction(assistant->description());
+		action->setData(assistant->expression());
+		QObject::connect(action, SIGNAL(triggered()), this, SLOT(insertAssist()));
+	}
+	menu->exec(event->globalPos());
 }

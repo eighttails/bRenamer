@@ -34,12 +34,9 @@ class RegExpMethod : public RenameMethod
     Q_OBJECT
 public:
     explicit RegExpMethod(QObject *parent = 0);
-    virtual QString rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString);
 
-signals:
-
-public slots:
-
+	virtual QString rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString) override;
+	virtual QList<RenameAssistant *> getRenameAssistants() override;
 };
 
 #endif // REGEXPMETHOD_H

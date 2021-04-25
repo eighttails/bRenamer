@@ -29,6 +29,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QObject>
 
+class RenameAssistant;
+
 class RenameMethod : public QObject
 {
     Q_OBJECT
@@ -42,9 +44,9 @@ public:
 	// 状態を持つ置換方式については、一括置換の実行ごとに状態をリセットする。
     virtual void reset() {};
 
-signals:
-
-public slots:
+	// 入力補助情報を返す
+	// オブジェクトの解放責任は呼び出し側が負う。
+	virtual QList<RenameAssistant*> getRenameAssistants() = 0;
 
 };
 
