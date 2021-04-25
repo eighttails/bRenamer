@@ -114,6 +114,16 @@
           <item row="1" column="1">
            <widget class="QLineEdit" name="LineEditRenameString"/>
           </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>履歴:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="comboBoxHistory"/>
+          </item>
          </layout>
         </item>
         <item>
@@ -218,6 +228,9 @@
         </item>
         <item>
          <widget class="QTableWidget" name="tableWidgetPreview">
+          <property name="editTriggers">
+           <set>QAbstractItemView::NoEditTriggers</set>
+          </property>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>

@@ -30,45 +30,63 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMainWindow>
 #include <QModelIndex>
 #include <QUndoStack>
+#include <QQueue>
 #include "rename.h"
 class Query;
 class QFileSystemModel;
 
 namespace Ui {
-    class MainWindow;
+class MainWindow;
 }
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+	Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
-    ~MainWindow();
+	explicit MainWindow(QWidget *parent = 0);
+	~MainWindow();
 
 	Query *query() const;
 
+	struct History
+	{
+		History(QString q, QString r)
+			: query(q)
+			, rename(r){}
+		QString query;
+		QString rename;
+	};
+
 private slots:
 	void updateLineEditPath(QModelIndex index);
-    void updateSubjects();
+	void updateSubjects();
 
-    void on_pushButtonPreview_clicked();
-    void on_pushButtonRename_clicked();
-    void on_pushButtonUndo_clicked();
+	void on_pushButtonPreview_clicked();
+	void on_pushButtonRename_clicked();
+	void on_pushButtonUndo_clicked();
 
-    void on_checkBoxShowHiddenFolder_toggled(bool enabled);
+	void on_checkBoxShowHiddenFolder_toggled(bool enabled);
 	void on_pushButtonOpenFolder_clicked();
 
+	void on_comboBoxHistory_currentIndexChanged(int index);
+
 private:
-    QList<Rename> createRenameList();
-    void updatePreview(const QList<Rename>& list);
+	QList<Rename> createRenameList();
+	void updatePreview(const QList<Rename>& list);
+	void addHistory(QString query, QString rename);
+	void saveHistory();
+	void restoreHistory();
 
-    Ui::MainWindow *ui;
-    Query* query_;
-    QFileSystemModel* fsModel_;
+	Ui::MainWindow *ui;
+	Query* query_;
+	QFileSystemModel* fsModel_;
 
-    // 実行されたリネームの履歴(undo用)
-    QUndoStack undoStack_;
+	// 実行されたリネームの履歴(undo用)
+	QUndoStack undoStack_;
+
+	// 実行されたリネームの履歴（再実行用）
+	QQueue<History> history_;
 };
 
 #endif // MAINWINDOW_H

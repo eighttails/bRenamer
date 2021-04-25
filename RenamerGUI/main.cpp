@@ -30,6 +30,8 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+	QApplication::setOrganizationName("eighttails");
+	QApplication::setApplicationName("bRenamer");
 
     MainWindow w;
     w.show();

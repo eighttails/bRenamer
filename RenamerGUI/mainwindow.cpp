@@ -29,6 +29,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFileIconProvider>
 #include <QFileDialog>
 #include <QList>
+#include <QSettings>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "query.h"
@@ -39,102 +40,155 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "renamecommand.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow),
-    query_(NULL),
-    fsModel_(NULL)
+	QMainWindow(parent),
+	ui(new Ui::MainWindow),
+	query_(NULL),
+	fsModel_(NULL)
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
 	// クエリ生成
-    QList<RenameMethod*> methods;
-    methods.append(new RegExpMethod());
-    methods.append(new SequenceMethod());
-    methods.append(new ParentFolderMethod());
-    query_ = new Query(this, methods);
+	QList<RenameMethod*> methods;
+	methods.append(new RegExpMethod());
+	methods.append(new SequenceMethod());
+	methods.append(new ParentFolderMethod());
+	query_ = new Query(this, methods);
 	query_->queryAssistants().append(new QueryAssistant("拡張子が.txtのファイル", "(.*)\\.txt"));
 
 	// 検索対象パスを設定
-    QString homePath = QDir::homePath();
-    ui->lineEditPath->setText(homePath);
+	QString homePath = QDir::homePath();
+	ui->lineEditPath->setText(homePath);
 
 	// ツリービュー作成
-    fsModel_ = new QFileSystemModel(this);
-    fsModel_->setRootPath(homePath);
-    fsModel_->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
-    ui->treeViewFileSystem->setModel(fsModel_);
-    ui->treeViewFileSystem->setCurrentIndex(fsModel_->index(homePath));
-    ui->treeViewFileSystem->expand(ui->treeViewFileSystem->currentIndex());
-    ui->treeViewFileSystem->setColumnWidth(0, 200);
-    connect(ui->treeViewFileSystem, SIGNAL(clicked(QModelIndex)), this, SLOT(updateLineEditPath(QModelIndex)));
+	fsModel_ = new QFileSystemModel(this);
+	fsModel_->setRootPath(homePath);
+	fsModel_->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
+	ui->treeViewFileSystem->setModel(fsModel_);
+	ui->treeViewFileSystem->setCurrentIndex(fsModel_->index(homePath));
+	ui->treeViewFileSystem->expand(ui->treeViewFileSystem->currentIndex());
+	ui->treeViewFileSystem->setColumnWidth(0, 200);
+	connect(ui->treeViewFileSystem, SIGNAL(clicked(QModelIndex)), this, SLOT(updateLineEditPath(QModelIndex)));
 
 	// リネーム対象
-    connect(ui->checkBoxFileSubject, SIGNAL(toggled(bool)), this, SLOT(updateSubjects()));
-    connect(ui->checkBoxFolderSubject, SIGNAL(toggled(bool)), this, SLOT(updateSubjects()));
+	connect(ui->checkBoxFileSubject, SIGNAL(toggled(bool)), this, SLOT(updateSubjects()));
+	connect(ui->checkBoxFolderSubject, SIGNAL(toggled(bool)), this, SLOT(updateSubjects()));
 
 	// 大文字と小文字を区別する
-    connect(ui->checkBoxCaseSensitive, SIGNAL(toggled(bool)), query_, SLOT(setCaseSensitive(bool)));
+	connect(ui->checkBoxCaseSensitive, SIGNAL(toggled(bool)), query_, SLOT(setCaseSensitive(bool)));
 
 	// サブフォルダを含む
-    connect(ui->checkBoxRecursive, SIGNAL(toggled(bool)), query_, SLOT(setRecursive(bool)));
+	connect(ui->checkBoxRecursive, SIGNAL(toggled(bool)), query_, SLOT(setRecursive(bool)));
 
 	// プレビュー領域
-    ui->tableWidgetPreview->resizeColumnToContents(0);
-    ui->tableWidgetPreview->setColumnWidth(1, 200);
-    ui->tableWidgetPreview->setColumnWidth(2, 200);
-    ui->tableWidgetPreview->setColumnWidth(3, 200);
+	ui->tableWidgetPreview->resizeColumnToContents(0);
+	ui->tableWidgetPreview->setColumnWidth(1, 200);
+	ui->tableWidgetPreview->setColumnWidth(2, 200);
+	ui->tableWidgetPreview->setColumnWidth(3, 200);
 
 	// Undo
-    undoStack_.setUndoLimit(1);
-    connect(&undoStack_, SIGNAL(canUndoChanged(bool)), ui->pushButtonUndo, SLOT(setEnabled(bool)));
+	undoStack_.setUndoLimit(1);
+	connect(&undoStack_, SIGNAL(canUndoChanged(bool)), ui->pushButtonUndo, SLOT(setEnabled(bool)));
+
+	// 履歴
+	restoreHistory();
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+	saveHistory();
+	delete ui;
 }
 
 void MainWindow::updateLineEditPath(QModelIndex index)
 {
-    QString path = fsModel_->filePath(index);
-    ui->lineEditPath->setText(path);
-    ui->treeViewFileSystem->resizeColumnToContents(0);
+	QString path = fsModel_->filePath(index);
+	ui->lineEditPath->setText(path);
+	ui->treeViewFileSystem->resizeColumnToContents(0);
 }
 
 void MainWindow::updateSubjects()
 {
 	Query::RenameSubject subject = Query::NONE;
-    if(ui->checkBoxFileSubject->checkState() == Qt::Checked){
-        subject |= Query::FILE;
-    }
-    if(ui->checkBoxFolderSubject->checkState() == Qt::Checked){
-        subject |= Query::FOLDER;
-    }
-    query_->setSubject(subject);
+	if(ui->checkBoxFileSubject->checkState() == Qt::Checked){
+		subject |= Query::FILE;
+	}
+	if(ui->checkBoxFolderSubject->checkState() == Qt::Checked){
+		subject |= Query::FOLDER;
+	}
+	query_->setSubject(subject);
 }
 
 QList<Rename> MainWindow::createRenameList()
 {
-    return query_->getRenameList(
-                ui->lineEditPath->text(),
-                ui->LineEditQueryString->text(),
-                ui->LineEditRenameString->text());
+	return query_->getRenameList(
+				ui->lineEditPath->text(),
+				ui->LineEditQueryString->text(),
+				ui->LineEditRenameString->text());
 }
 
 void MainWindow::updatePreview(const QList<Rename>& list)
 {
-    ui->tableWidgetPreview->clearContents();
-    ui->tableWidgetPreview->setRowCount(list.size());
-    for(int i = 0; i < list.size(); ++i){
-        const Rename& r = list[i];
-        QFileIconProvider v;
-        int j = 0;
-        ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(v.icon(QFileInfo(QDir(r.parent_), r.from_)), ""));
-        ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(r.from_));
-        ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(r.to_));
-        ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(r.parent_));
-    }
+	ui->tableWidgetPreview->clearContents();
+	ui->tableWidgetPreview->setRowCount(list.size());
+	for(int i = 0; i < list.size(); ++i){
+		const Rename& r = list[i];
+		QFileIconProvider v;
+		int j = 0;
+		ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(v.icon(QFileInfo(QDir(r.parent_), r.from_)), ""));
+		ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(r.from_));
+		ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(r.to_));
+		ui->tableWidgetPreview->setItem(i, j++, new QTableWidgetItem(r.parent_));
+	}
 }
+
+void MainWindow::addHistory(QString query, QString rename)
+{
+	foreach(auto h, history_){
+		// すでに履歴に含まれている場合は何もしない
+		if (h.query == query && h.rename == rename)
+			return;
+	}
+	history_.push_back(History(query, rename));
+	// 履歴は5個まで記憶する
+	while (history_.size() > 5){
+		history_.pop_front();
+	}
+	ui->comboBoxHistory->clear();
+	ui->comboBoxHistory->addItem("");
+	foreach (auto h, history_) {
+		ui->comboBoxHistory->addItem(h.query + " -> " + h.rename);
+	}
+}
+
+void MainWindow::saveHistory()
+{
+	QSettings settings;
+	settings.beginWriteArray("history");
+	for (int i = 0; i < history_.size(); ++i) {
+		auto h = history_.at(i);
+		settings.setArrayIndex(i);
+		settings.setValue("query", h.query);
+		settings.setValue("rename", h.rename);
+	}
+	settings.endArray();
+}
+
+void MainWindow::restoreHistory()
+{
+	ui->comboBoxHistory->clear();
+	ui->comboBoxHistory->addItem("");
+
+	QSettings settings;
+	int size = settings.beginReadArray("history");
+	for (int i = 0; i < size; ++i) {
+		settings.setArrayIndex(i);
+		addHistory(settings.value("query").toString(),
+				   settings.value("rename").toString());
+	}
+	settings.endArray();
+}
+
+
 
 Query *MainWindow::query() const
 {
@@ -144,30 +198,32 @@ Query *MainWindow::query() const
 void MainWindow::on_pushButtonPreview_clicked()
 {
 	QList<Rename> list = createRenameList();
-    updatePreview(list);
+	updatePreview(list);
 }
 void MainWindow::on_pushButtonRename_clicked()
 {
-    QList<Rename> list = createRenameList();
-    updatePreview(list);
-    if(list.size() > 0){
-        RenameCommand* command = new RenameCommand(list);
-        undoStack_.push(command);
-    }
+	QList<Rename> list = createRenameList();
+	updatePreview(list);
+	if(list.size() > 0){
+		RenameCommand* command = new RenameCommand(list);
+		undoStack_.push(command);
+		addHistory(ui->LineEditQueryString->text(),
+				   ui->LineEditRenameString->text());
+	}
 }
 
 void MainWindow::on_pushButtonUndo_clicked()
 {
-    if(undoStack_.canUndo()){
-        undoStack_.undo();
-    }
+	if(undoStack_.canUndo()){
+		undoStack_.undo();
+	}
 }
 
 void MainWindow::on_checkBoxShowHiddenFolder_toggled(bool enabled)
 {
-    fsModel_->setFilter(enabled ?
-                            QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden :
-                            QDir::AllDirs | QDir::NoDotAndDotDot);
+	fsModel_->setFilter(enabled ?
+							QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden :
+							QDir::AllDirs | QDir::NoDotAndDotDot);
 }
 
 void MainWindow::on_pushButtonOpenFolder_clicked()
@@ -178,4 +234,16 @@ void MainWindow::on_pushButtonOpenFolder_clicked()
 		ui->treeViewFileSystem->setCurrentIndex(fsModel_->index(dir));
 		ui->treeViewFileSystem->expand(ui->treeViewFileSystem->currentIndex());
 	}
+}
+
+void MainWindow::on_comboBoxHistory_currentIndexChanged(int index)
+{
+	if (index <= 0) return;
+	// コンボボックスの0番目は空白であることを前提とする
+	History history = history_[index - 1];
+	ui->LineEditQueryString->setText(history.query);
+	ui->LineEditRenameString->setText(history.rename);
+	QList<Rename> list = createRenameList();
+	updatePreview(list);
+	ui->comboBoxHistory->setCurrentIndex(0);
 }
