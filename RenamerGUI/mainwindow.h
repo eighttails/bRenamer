@@ -55,6 +55,8 @@ private slots:
     void on_pushButtonUndo_clicked();
 
     void on_checkBoxShowHiddenFolder_toggled(bool enabled);
+	void on_pushButtonOpenFolder_clicked();
+
 private:
     QList<Rename> createRenameList();
     void updatePreview(const QList<Rename>& list);

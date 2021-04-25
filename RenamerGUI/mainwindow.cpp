@@ -27,6 +27,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFileSystemModel>
 #include <QUndoStack>
 #include <QFileIconProvider>
+#include <QFileDialog>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "query.h"
@@ -159,4 +160,14 @@ void MainWindow::on_checkBoxShowHiddenFolder_toggled(bool enabled)
     fsModel_->setFilter(enabled ?
                             QDir::AllDirs | QDir::NoDotAndDotDot | QDir::Hidden :
                             QDir::AllDirs | QDir::NoDotAndDotDot);
+}
+
+void MainWindow::on_pushButtonOpenFolder_clicked()
+{
+	QString dir = QFileDialog::getExistingDirectory(this, "フォルダを参照", ui->lineEditPath->text());
+	if (!dir.isEmpty()){
+		ui->lineEditPath->setText(dir);
+		ui->treeViewFileSystem->setCurrentIndex(fsModel_->index(dir));
+		ui->treeViewFileSystem->expand(ui->treeViewFileSystem->currentIndex());
+	}
 }
