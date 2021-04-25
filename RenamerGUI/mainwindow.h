@@ -46,8 +46,10 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+	Query *query() const;
+
 private slots:
-    void updateLineEditPath(QModelIndex index);
+	void updateLineEditPath(QModelIndex index);
     void updateSubjects();
 
     void on_pushButtonPreview_clicked();

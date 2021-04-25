@@ -26,7 +26,31 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "queryassistant.h"
 
-QueryAssistant::QueryAssistant(QObject *parent) :
-    QObject(parent)
+QueryAssistant::QueryAssistant(const QString& description,
+							   const QString& expression,
+							   QObject *parent)
+	: QObject(parent)
+	, description_(description)
+	, expression_(expression)
 {
+}
+
+QString QueryAssistant::description() const
+{
+	return description_;
+}
+
+void QueryAssistant::setDescription(const QString &description)
+{
+	description_ = description;
+}
+
+QString QueryAssistant::expression() const
+{
+	return expression_;
+}
+
+void QueryAssistant::setExpression(const QString &expression)
+{
+	expression_ = expression;
 }

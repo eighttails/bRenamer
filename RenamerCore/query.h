@@ -59,11 +59,11 @@ public:
     explicit Query(QObject *parent, QList<RenameMethod*> methods);
     virtual ~Query();
 
-    bool isCaseSensitive() { return caseSensitive_; }
-    bool isRecursive() { return recursive_; }
-    RenameSubject subject() {return subject_; }
-    QRegExp::PatternSyntax patternSyntax() { return patternSyntax_; }
-    const QList<QueryAssistant*>& queryAssistants() const { return queryAssistants_; }
+	bool isCaseSensitive() const { return caseSensitive_; }
+	bool isRecursive() const { return recursive_; }
+	const RenameSubject subject() const {return subject_; }
+	QRegExp::PatternSyntax patternSyntax() const { return patternSyntax_; }
+	QList<QueryAssistant*>& queryAssistants() { return queryAssistants_; }
 
 signals:
 

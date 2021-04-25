@@ -28,17 +28,25 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define QUERYASSISTANT_H
 
 #include <QObject>
+#include <QString>
 
 class QueryAssistant : public QObject
 {
     Q_OBJECT
 public:
-    explicit QueryAssistant(QObject *parent = 0);
+	explicit QueryAssistant(const QString& description,
+							const QString& expression,
+							QObject *parent = 0);
 
-signals:
+	QString description() const;
+	void setDescription(const QString &description);
 
-public slots:
+	QString expression() const;
+	void setExpression(const QString &expression);
 
+private:
+	QString description_;
+	QString expression_;
 };
 
 #endif // QUERYASSISTANT_H

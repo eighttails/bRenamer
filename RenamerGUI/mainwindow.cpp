@@ -28,9 +28,11 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QUndoStack>
 #include <QFileIconProvider>
 #include <QFileDialog>
+#include <QList>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "query.h"
+#include "queryassistant.h"
 #include "regexpmethod.h"
 #include "sequencemethod.h"
 #include "parentfoldermethod.h"
@@ -50,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     methods.append(new SequenceMethod());
     methods.append(new ParentFolderMethod());
     query_ = new Query(this, methods);
+	query_->queryAssistants().append(new QueryAssistant("拡張子が.txtのファイル", "(.*)\\.txt"));
 
 	// 検索対象パスを設定
     QString homePath = QDir::homePath();
@@ -133,9 +136,14 @@ void MainWindow::updatePreview(const QList<Rename>& list)
     }
 }
 
+Query *MainWindow::query() const
+{
+	return query_;
+}
+
 void MainWindow::on_pushButtonPreview_clicked()
 {
-    QList<Rename> list = createRenameList();
+	QList<Rename> list = createRenameList();
     updatePreview(list);
 }
 void MainWindow::on_pushButtonRename_clicked()
