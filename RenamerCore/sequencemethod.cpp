@@ -45,9 +45,11 @@ void SequenceMethod::reset()
 
 QString SequenceMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
 {
+	Q_UNUSED(query)
+	Q_UNUSED(caseSensitive)
+	Q_UNUSED(renameString)
 
-
-    /*置換リテラルと桁数を検出*/
+    // 置換リテラルと桁数を検出
     const QString format = "<s(\\d*),{0,1}(\\d*)>";
     QRegExp regExp(format);
     regExp.setCaseSensitivity(Qt::CaseInsensitive);
@@ -55,7 +57,7 @@ QString SequenceMethod::rename(QString path, QString fileName, QString query, bo
     pos = regExp.indexIn(fileName, pos);
     if(pos == -1) return fileName;
 
-    /*桁数を決定*/
+    // 桁数を決定
     if(digits_ == INT_MIN){
         if(regExp.cap(1) != ""){
             digits_ = regExp.cap(1).toInt();
@@ -63,18 +65,18 @@ QString SequenceMethod::rename(QString path, QString fileName, QString query, bo
             digits_ = 1;
         }
     }
-    /*オリジンを決定*/
+    // オリジンを決定
     if(origin_ == INT_MIN){
         if(regExp.cap(2) != ""){
             origin_ = regExp.cap(2).toInt();
         } else {
             origin_ = 1;
         }
-        /*初期値を設定*/
+        // 初期値を設定
         currentNum_ = origin_;
     }
 
-    /*前回処理したパス。連番はフォルダごとに振る*/
+    // 前回処理したパス。連番はフォルダごとに振る
     static QString prevPath;
     if(prevPath != path){
         currentNum_ = origin_;
@@ -83,7 +85,7 @@ QString SequenceMethod::rename(QString path, QString fileName, QString query, bo
 
     QString renamed = fileName;
 
-    /*先頭を0で埋める*/
+    // 先頭を0で埋める
     QString seqStr = QString::number(currentNum_);
     while(seqStr.length() < digits_)
         seqStr.prepend("0");

@@ -48,8 +48,9 @@ class Query : public QObject
     Q_PROPERTY(QRegExp::PatternSyntax PatternSyntax READ patternSyntax WRITE setPatternSyntax)
 
 public:
-    /*リネーム対象。フォルダー、ファイル、またはその両方*/
+	// リネーム対象。フォルダー、ファイル、またはその両方
     enum RenameSubjectFlag {
+		NONE = 0x0,
         FOLDER = 0x1,
         FILE = 0x2,
     };
@@ -67,8 +68,8 @@ public:
 signals:
 
 public slots:
-    /*rootPath以下のフォルダからクエリにマッチするファイルを抽出し、*/
-    /*リネーム対象と、リネーム後のファイル名のリストを返す*/
+	// rootPath以下のフォルダからクエリにマッチするファイルを抽出し、
+	// リネーム対象と、リネーム後のファイル名のリストを返す
     QList<Rename> getRenameList(QString rootPath, QString query, QString renameString);
 
     void setSubject(RenameSubject subject) { subject_ = subject; }
@@ -78,14 +79,14 @@ public slots:
 protected:
     void getRenameListInternal(QList<Rename>& list, QString parentPath, QString query, QString renameString);
 
-    bool caseSensitive_; /*大文字小文字を区別する*/
-    bool recursive_; /*フォルダを再帰的に処理する*/
-    RenameSubject subject_; /*リネーム対象*/
+	bool caseSensitive_; // 大文字小文字を区別する
+	bool recursive_; // フォルダを再帰的に処理する
+	RenameSubject subject_; // リネーム対象
 
-    /*クエリ書式に関するヘルプ文字列のリスト*/
+	// クエリ書式に関するヘルプ文字列のリスト
     QList<QueryAssistant*> queryAssistants_;
 
-    /*リネーム処理クラスのリスト*/
+	// リネーム処理クラスのリスト
     QList<RenameMethod*> methods_;
 
     QRegExp::PatternSyntax patternSyntax_;

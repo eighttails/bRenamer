@@ -42,7 +42,7 @@ QString ParentFolderMethod::rename(QString path, QString fileName, QString query
     if(pos == -1) return fileName;
 
     int hierarchy = 1;
-    /*遡る階層数を決定*/
+    // 遡る階層数を決定
     if(regExp.cap(1) != ""){
         hierarchy = regExp.cap(1).toInt();
     }

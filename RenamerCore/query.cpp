@@ -46,7 +46,7 @@ Query::~Query(){
 
 QList<Rename> Query::getRenameList(QString rootPath, QString query, QString renameString)
 {
-    /*メソッドの状態をリセット*/
+    // メソッドの状態をリセット
     foreach(RenameMethod* method, methods_){
         method->reset();
     }
@@ -80,7 +80,7 @@ void Query::getRenameListInternal(QList<Rename>& list, QString parentPath, QStri
             rename.parent_ = parentPath;
 
             foreach(RenameMethod* method, methods_){
-                /*複数のリネーム方式を同時に使用するため、各RenameMethodはtoに記載されたファイル名を改変する*/
+                // 複数のリネーム方式を同時に使用するため、各RenameMethodはtoに記載されたファイル名を改変する
                 rename.to_ = method->rename(parentPath, rename.to_, query, caseSensitive_, renameString);
             }
             list.append(rename);

@@ -35,11 +35,11 @@ class RenameMethod : public QObject
 public:
     explicit RenameMethod(QObject *parent = 0);
 
-    /*元ファイル名とクエリ文字列から、リネーム後のファイル名を返す。*/
-    /*クエリ文字列は正規表現を用いた置換の場合に参照する。*/
+	// 元ファイル名とクエリ文字列から、リネーム後のファイル名を返す。
+	// クエリ文字列は正規表現を用いた置換の場合に参照する。
     virtual QString rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString) = 0;
 
-    /*状態を持つ置換方式については、一括置換の実行ごとに状態をリセットする。*/
+	// 状態を持つ置換方式については、一括置換の実行ごとに状態をリセットする。
     virtual void reset() {};
 
 signals:

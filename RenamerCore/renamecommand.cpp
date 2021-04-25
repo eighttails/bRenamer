@@ -37,7 +37,7 @@ RenameCommand::RenameCommand(QList<Rename> renameList, RenameCommand* parent) :
 
 void RenameCommand::redo()
 {
-    /*リストの先頭から順にリネーム*/
+    // リストの先頭から順にリネーム
     for(int i = 0; i < renameList_.size(); ++i){
         QDir dir(renameList_[i].parent_);
         if(!dir.exists()) continue;
@@ -47,7 +47,7 @@ void RenameCommand::redo()
 
 void RenameCommand::undo()
 {
-    /*リストの末尾から逆順にリネーム*/
+    // リストの末尾から逆順にリネーム
     for(int i = renameList_.size() - 1; i >= 0; --i){
         QDir dir(renameList_[i].parent_);
         if(!dir.exists()) continue;

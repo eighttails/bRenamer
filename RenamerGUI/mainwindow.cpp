@@ -43,18 +43,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    /*クエリ生成*/
+	// クエリ生成
     QList<RenameMethod*> methods;
     methods.append(new RegExpMethod());
     methods.append(new SequenceMethod());
     methods.append(new ParentFolderMethod());
     query_ = new Query(this, methods);
 
-    /*検索対象パスを設定*/
+	// 検索対象パスを設定
     QString homePath = QDir::homePath();
     ui->lineEditPath->setText(homePath);
 
-    /*ツリービュー作成*/
+	// ツリービュー作成
     fsModel_ = new QFileSystemModel(this);
     fsModel_->setRootPath(homePath);
     fsModel_->setFilter(QDir::AllDirs | QDir::NoDotAndDotDot);
@@ -64,23 +64,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->treeViewFileSystem->setColumnWidth(0, 200);
     connect(ui->treeViewFileSystem, SIGNAL(clicked(QModelIndex)), this, SLOT(updateLineEditPath(QModelIndex)));
 
-    /*リネーム対象*/
+	// リネーム対象
     connect(ui->checkBoxFileSubject, SIGNAL(toggled(bool)), this, SLOT(updateSubjects()));
     connect(ui->checkBoxFolderSubject, SIGNAL(toggled(bool)), this, SLOT(updateSubjects()));
 
-    /*大文字と小文字を区別する*/
+	// 大文字と小文字を区別する
     connect(ui->checkBoxCaseSensitive, SIGNAL(toggled(bool)), query_, SLOT(setCaseSensitive(bool)));
 
-    /*サブフォルダを含む*/
+	// サブフォルダを含む
     connect(ui->checkBoxRecursive, SIGNAL(toggled(bool)), query_, SLOT(setRecursive(bool)));
 
-    /*プレビュー領域*/
+	// プレビュー領域
     ui->tableWidgetPreview->resizeColumnToContents(0);
     ui->tableWidgetPreview->setColumnWidth(1, 200);
     ui->tableWidgetPreview->setColumnWidth(2, 200);
     ui->tableWidgetPreview->setColumnWidth(3, 200);
 
-    /*Undo*/
+	// Undo
     undoStack_.setUndoLimit(1);
     connect(&undoStack_, SIGNAL(canUndoChanged(bool)), ui->pushButtonUndo, SLOT(setEnabled(bool)));
 }
@@ -99,7 +99,7 @@ void MainWindow::updateLineEditPath(QModelIndex index)
 
 void MainWindow::updateSubjects()
 {
-    Query::RenameSubject subject = 0;
+	Query::RenameSubject subject = Query::NONE;
     if(ui->checkBoxFileSubject->checkState() == Qt::Checked){
         subject |= Query::FILE;
     }

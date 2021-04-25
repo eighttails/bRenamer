@@ -63,7 +63,7 @@ private:
     Query* query_;
     QFileSystemModel* fsModel_;
 
-    /*実行されたリネームの履歴(undo用)*/
+    // 実行されたリネームの履歴(undo用)
     QUndoStack undoStack_;
 };
 

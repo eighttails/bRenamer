@@ -28,7 +28,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define RENAME_H
 #include <QString>
 
-/*リネーム前後のファイル名を格納するクラス*/
+// リネーム前後のファイル名を格納するクラス
 class Rename
 {
 public:

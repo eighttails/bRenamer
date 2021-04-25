@@ -61,7 +61,7 @@ void deleteFolder(const QString folderPath)
     QDir dir(folderPath);
     if(!dir.exists()) return;
 
-    /*再帰的にディレクトリを削除*/
+    // 再帰的にディレクトリを削除
     QFileInfoList fiList = dir.entryInfoList(QDir::AllDirs | QDir::Files | QDir::NoDotAndDotDot);
     foreach(QFileInfo info, fiList){
         if(info.isDir()){

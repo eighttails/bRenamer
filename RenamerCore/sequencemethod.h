@@ -21,9 +21,9 @@ signals:
 
 public slots:
 private:
-    int origin_;        /*連番の起点*/
-    int digits_;        /*連番の桁数*/
-    int currentNum_;    /*現在の番号*/
+	int origin_;        // 連番の起点
+	int digits_;        // 連番の桁数
+	int currentNum_;    // 現在の番号
 };
 
 #endif // SEQUENCEMETHOD_H
