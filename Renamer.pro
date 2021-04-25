@@ -5,3 +5,5 @@ SUBDIRS += \
     RenamerCoreTest \
     RenamerGUI
 
+RenamerGUI.depends = RenamerCore
+RenamerCoreTest.depends = RenamerCore
