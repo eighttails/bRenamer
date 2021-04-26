@@ -93,7 +93,10 @@ void Query::createRenameAssistantsList(QList<RenameMethod *> methods)
 {
 	foreach(RenameMethod* method, methods){
 		auto assistants = method->getRenameAssistants();
-		this->renameAssistants_.append(assistants);
+		renameAssistants_.append(assistants);
+	}
+	foreach(RenameAssistant* assistant, renameAssistants_){
+		assistant->setParent(this);
 	}
 }
 
