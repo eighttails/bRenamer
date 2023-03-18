@@ -22,9 +22,9 @@ signals:
 
 public slots:
 private:
-	int origin_;        // 連番の起点
-	int digits_;        // 連番の桁数
-	int currentNum_;    // 現在の番号
+    int64_t origin_;        // 連番の起点
+    int64_t digits_;        // 連番の桁数
+    int64_t currentNum_;    // 現在の番号
 };
 
 #endif // SEQUENCEMETHOD_H

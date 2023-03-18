@@ -31,17 +31,17 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 SequenceMethod::SequenceMethod(QObject *parent) :
     RenameMethod(parent),
-    origin_(INT_MIN),
-    digits_(INT_MIN),
-    currentNum_(INT_MIN)
+    origin_(INT64_MIN),
+    digits_(INT64_MIN),
+    currentNum_(INT64_MIN)
 {
 }
 
 void SequenceMethod::reset()
 {
-    origin_ = INT_MIN;
-    digits_ = INT_MIN;
-    currentNum_ = INT_MIN;
+    origin_ = INT64_MIN;
+    digits_ = INT64_MIN;
+    currentNum_ = INT64_MIN;
 }
 
 QString SequenceMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
@@ -59,17 +59,17 @@ QString SequenceMethod::rename(QString path, QString fileName, QString query, bo
     if(pos == -1) return fileName;
 
     // 桁数を決定
-    if(digits_ == INT_MIN){
+    if(digits_ == INT64_MIN){
         if(regExp.cap(1) != ""){
-            digits_ = regExp.cap(1).toInt();
+            digits_ = regExp.cap(1).toLongLong();
         } else {
             digits_ = 1;
         }
     }
     // オリジンを決定
-    if(origin_ == INT_MIN){
+    if(origin_ == INT64_MIN){
         if(regExp.cap(2) != ""){
-            origin_ = regExp.cap(2).toInt();
+            origin_ = regExp.cap(2).toLongLong();
         } else {
             origin_ = 1;
         }
