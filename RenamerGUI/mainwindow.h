@@ -58,6 +58,10 @@ public:
 		QString rename;
 	};
 
+    // QWidget interface
+protected:
+    virtual void closeEvent(QCloseEvent *event) override;
+
 private slots:
 	void updateLineEditPath(QModelIndex index);
 	void updateSubjects();
@@ -87,6 +91,8 @@ private:
 
 	// 実行されたリネームの履歴（再実行用）
 	QQueue<History> history_;
+
+
 };
 
 #endif // MAINWINDOW_H

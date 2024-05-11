@@ -92,6 +92,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	// 履歴
 	restoreHistory();
+
+    // ウィンドウサイズの復元
+    QSettings settings;
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("windowState").toByteArray());
 }
 
 MainWindow::~MainWindow()
@@ -193,7 +198,16 @@ void MainWindow::restoreHistory()
 
 Query *MainWindow::query() const
 {
-	return query_;
+    return query_;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    // ウィンドウサイズの保存
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
+    settings.setValue("windowState", saveState());
+    QMainWindow::closeEvent(event);
 }
 
 void MainWindow::on_pushButtonPreview_clicked()
