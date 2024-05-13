@@ -23,7 +23,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------*/
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QDir>
 #include "parentfoldermethod.h"
 #include "renameassistant.h"
@@ -35,16 +35,18 @@ ParentFolderMethod::ParentFolderMethod(QObject *parent) :
 QString ParentFolderMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
 {
     const QString format = "<p(\\d*)>";
-    QRegExp regExp(format);
-    regExp.setCaseSensitivity(Qt::CaseInsensitive);
-    int pos = 0;
-    pos = regExp.indexIn(fileName, pos);
-    if(pos == -1) return fileName;
+    QRegularExpression regExp(format);
+    if (!caseSensitive) {
+        regExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    }
+    QRegularExpressionMatch match = regExp.match(fileName);
+    bool hasMatch = match.hasMatch(); // true
+    if(!hasMatch) return fileName;
 
     int hierarchy = 1;
     // 遡る階層数を決定
-    if(regExp.cap(1) != ""){
-        hierarchy = regExp.cap(1).toInt();
+    if(match.captured(1) != ""){
+        hierarchy = match.captured(1).toInt();
     }
 
     QString parentPath = path;
@@ -62,7 +64,7 @@ QString ParentFolderMethod::rename(QString path, QString fileName, QString query
     }
 
     QString renamed = fileName;
-    renamed.replace(QRegExp(regExp.cap(0)), parentFolder);
+    renamed.replace(QRegularExpression(match.captured(0)), parentFolder);
 
     // 同一置換文字列内に複数の<f>リテラルがあった場合に対処するため、再帰処理にする。
     return rename(path, renamed, query, caseSensitive, renameString);

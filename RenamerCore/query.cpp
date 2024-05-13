@@ -33,8 +33,7 @@ Query::Query(QObject *parent, QList<RenameMethod*> methods) :
     caseSensitive_(false),
     recursive_(false),
     subject_(FOLDER | FILE),
-    methods_(methods),
-    patternSyntax_(QRegExp::RegExp2)
+    methods_(methods)
 {
 	createRenameAssistantsList(methods);
 }
@@ -58,7 +57,10 @@ QList<Rename> Query::getRenameList(QString rootPath, QString query, QString rena
 
 void Query::getRenameListInternal(QList<Rename>& list, QString parentPath, QString query, QString renameString)
 {
-    QRegExp exp(query, caseSensitive_ ? Qt::CaseSensitive : Qt::CaseInsensitive, patternSyntax_);
+    QRegularExpression regExp(QRegularExpression::anchoredPattern(query));
+    if (!caseSensitive_) {
+        regExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    }
 
     QDir dir(parentPath);
     if(!dir.exists()) return;
@@ -74,7 +76,7 @@ void Query::getRenameListInternal(QList<Rename>& list, QString parentPath, QStri
             getRenameListInternal(list, parentPath + "/" + fileName, query, renameString);
         }
 
-        if(isSubject && exp.exactMatch(fileName)){
+        if(isSubject && regExp.match(fileName).hasMatch()){
             Rename rename;
             rename.from_ = fileName;
             rename.to_ = fileName;

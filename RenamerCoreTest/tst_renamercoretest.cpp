@@ -26,7 +26,7 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QtCore/QString>
 #include <QtTest/QtTest>
-#include <QtWidgets/QFileSystemModel>
+#include <QFileSystemModel>
 #include "query.h"
 #include "regexpmethod.h"
 #include "sequencemethod.h"
@@ -146,16 +146,6 @@ void RenamerCoreTest::regExpQueryTest1()
         QVERIFY(list.count() == 2);
         int i = 0;
         QVERIFY(list[i++].from_ == "folderAAA");
-        QVERIFY(list[i++].from_ == "folderAAA2");
-    }
-    {
-        q.setRecursive(true);
-        q.setPatternSyntax(QRegExp::Wildcard);
-        q.setSubject(Query::FOLDER | Query::FILE);
-        QList<Rename> list = q.getRenameList(testPath_, "*AAA2*", "");
-        QVERIFY(list.count() == 2);
-        int i = 0;
-        QVERIFY(list[i++].from_ == "AAA2.txt");
         QVERIFY(list[i++].from_ == "folderAAA2");
     }
 }

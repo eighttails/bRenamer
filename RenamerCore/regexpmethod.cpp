@@ -24,7 +24,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------*/
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include "regexpmethod.h"
 #include "renameassistant.h"
 
@@ -36,8 +36,11 @@ RegExpMethod::RegExpMethod(QObject *parent) :
 QString RegExpMethod::rename(QString path, QString fileName, QString query, bool caseSensitive, QString renameString)
 {
     Q_UNUSED(path);
-    QRegExp regExp(query);
-    regExp.setCaseSensitivity(caseSensitive ? Qt::CaseSensitive : Qt::CaseInsensitive);
+    QRegularExpression regExp(query);
+    if (!caseSensitive) {
+        regExp.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+    }
+
     QString renamed = fileName;
     renamed.replace(regExp, renameString);
     return renamed;
@@ -46,7 +49,7 @@ QString RegExpMethod::rename(QString path, QString fileName, QString query, bool
 
 QList<RenameAssistant *> RegExpMethod::getRenameAssistants()
 {
-	QList<RenameAssistant *> list;
-	list.append(new RenameAssistant("正規表現:1番目のマッチ", "\\1"));
-	return list;
+    QList<RenameAssistant *> list;
+    list.append(new RenameAssistant("正規表現:1番目のマッチ", "\\1"));
+    return list;
 }

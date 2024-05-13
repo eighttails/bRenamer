@@ -29,15 +29,13 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QObject>
 #include <QList>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QMetaEnum>
 
 #include "queryassistant.h"
 #include "renameassistant.h"
 #include "rename.h"
 #include "renamemethod.h"
-
-Q_DECLARE_METATYPE(QRegExp::PatternSyntax)
 
 class Query : public QObject
 {
@@ -46,7 +44,6 @@ class Query : public QObject
     Q_PROPERTY(bool CaseSensitive READ isCaseSensitive WRITE setCaseSensitive)
     Q_PROPERTY(bool Recursive READ isRecursive WRITE setRecursive)
     Q_PROPERTY(RenameSubject RenameSubject READ subject WRITE setSubject)
-    Q_PROPERTY(QRegExp::PatternSyntax PatternSyntax READ patternSyntax WRITE setPatternSyntax)
 
 public:
 	// リネーム対象。フォルダー、ファイル、またはその両方
@@ -63,7 +60,6 @@ public:
 	bool isCaseSensitive() const { return caseSensitive_; }
 	bool isRecursive() const { return recursive_; }
 	const RenameSubject subject() const {return subject_; }
-	QRegExp::PatternSyntax patternSyntax() const { return patternSyntax_; }
 	QList<QueryAssistant*>& queryAssistants() { return queryAssistants_; }
 	QList<RenameAssistant*>& renameAssistants() { return renameAssistants_; }
 
@@ -77,7 +73,6 @@ public slots:
     void setSubject(RenameSubject subject) { subject_ = subject; }
     void setCaseSensitive(bool caseSensitive) { caseSensitive_ = caseSensitive; }
     void setRecursive(bool recursive) { recursive_ = recursive; }
-    void setPatternSyntax(QRegExp::PatternSyntax patternSyntax) { patternSyntax_ = patternSyntax; }
 protected:
     void getRenameListInternal(QList<Rename>& list, QString parentPath, QString query, QString renameString);
 	void createRenameAssistantsList(QList<RenameMethod*> methods);
@@ -94,8 +89,6 @@ protected:
 
 	// リネーム処理クラスのリスト
     QList<RenameMethod*> methods_;
-
-    QRegExp::PatternSyntax patternSyntax_;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(Query::RenameSubject)
 

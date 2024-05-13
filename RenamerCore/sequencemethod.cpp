@@ -24,7 +24,7 @@ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -------------------------------------------------------------------------*/
 
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QStringList>
 #include "sequencemethod.h"
 #include "renameassistant.h"
@@ -52,24 +52,23 @@ QString SequenceMethod::rename(QString path, QString fileName, QString query, bo
 
     // 置換リテラルと桁数を検出
     const QString format = "<s(\\d*),{0,1}(\\d*)>";
-    QRegExp regExp(format);
-    regExp.setCaseSensitivity(Qt::CaseInsensitive);
-    int pos = 0;
-    pos = regExp.indexIn(fileName, pos);
-    if(pos == -1) return fileName;
+    QRegularExpression regExp(format);
+    QRegularExpressionMatch match = regExp.match(fileName);
+    bool hasMatch = match.hasMatch(); // true
+    if(!hasMatch) return fileName;
 
     // 桁数を決定
     if(digits_ == INT64_MIN){
-        if(regExp.cap(1) != ""){
-            digits_ = regExp.cap(1).toLongLong();
+        if(match.captured(1) != ""){
+            digits_ = match.captured(1).toLongLong();
         } else {
             digits_ = 1;
         }
     }
     // オリジンを決定
     if(origin_ == INT64_MIN){
-        if(regExp.cap(2) != ""){
-            origin_ = regExp.cap(2).toLongLong();
+        if(match.captured(2) != ""){
+            origin_ = match.captured(2).toLongLong();
         } else {
             origin_ = 1;
         }
@@ -91,7 +90,7 @@ QString SequenceMethod::rename(QString path, QString fileName, QString query, bo
     while(seqStr.length() < digits_)
         seqStr.prepend("0");
 
-    renamed.replace(QRegExp(format), seqStr);
+    renamed.replace(QRegularExpression(format), seqStr);
     currentNum_++;
 
     return renamed;
