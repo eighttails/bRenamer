@@ -170,10 +170,10 @@ void RenamerCoreTest::regExpMethodTest1()
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC\\2");
         QVERIFY(list.count() == 4);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC2.txt");
-        QVERIFY(list[i++].to_ == "CCC1.txt");
-        QVERIFY(list[i++].to_ == "folderCCC");
-        QVERIFY(list[i++].to_ == "folderCCC2");
+        QVERIFY2(list[i++].to_ == "CCC2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC1.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC2", list[i-1].to_.toLocal8Bit().data());
     }
 }
 
@@ -198,40 +198,40 @@ void RenamerCoreTest::sequenceMethodTest1()
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s>_\\2");
         QVERIFY(list.count() == 4);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC_1_2.txt");
-        QVERIFY(list[i++].to_ == "CCC_2_1.txt");
-        QVERIFY(list[i++].to_ == "folderCCC_3_");
-        QVERIFY(list[i++].to_ == "folderCCC_4_2");
+        QVERIFY2(list[i++].to_ == "CCC_1_2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC_1_1.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_1_", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_1_2", list[i-1].to_.toLocal8Bit().data());
     }
     {
         q.setRecursive(true);
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s3>_\\2");
         QVERIFY(list.count() == 4);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC_001_2.txt");
-        QVERIFY(list[i++].to_ == "CCC_002_1.txt");
-        QVERIFY(list[i++].to_ == "folderCCC_003_");
-        QVERIFY(list[i++].to_ == "folderCCC_004_2");
+        QVERIFY2(list[i++].to_ == "CCC_001_2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC_001_1.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_001_", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_001_2", list[i-1].to_.toLocal8Bit().data());
     }
     {
         q.setRecursive(true);
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s,3>_\\2");
         QVERIFY(list.count() == 4);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC_3_2.txt");
-        QVERIFY(list[i++].to_ == "CCC_4_1.txt");
-        QVERIFY(list[i++].to_ == "folderCCC_5_");
-        QVERIFY(list[i++].to_ == "folderCCC_6_2");
+        QVERIFY2(list[i++].to_ == "CCC_3_2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC_3_1.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_3_", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_3_2", list[i-1].to_.toLocal8Bit().data());
     }
     {
         q.setRecursive(true);
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<s2,99>_\\2");
         QVERIFY(list.count() == 4);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC_99_2.txt");
-        QVERIFY(list[i++].to_ == "CCC_100_1.txt");
-        QVERIFY(list[i++].to_ == "folderCCC_101_");
-        QVERIFY(list[i++].to_ == "folderCCC_102_2");
+        QVERIFY2(list[i++].to_ == "CCC_99_2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC_99_1.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_99_", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC_99_2", list[i-1].to_.toLocal8Bit().data());
     }
 }
 
@@ -257,8 +257,8 @@ void RenamerCoreTest::parentFolderMethodTest1()
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p>_\\2");
         QVERIFY(list.count() == 2);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC_folder000_2.txt");
-        QVERIFY(list[i++].to_ == "CCC_folderAAA_1.txt");
+        QVERIFY2(list[i++].to_ == "CCC_folder000_2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC_folderAAA_1.txt", list[i-1].to_.toLocal8Bit().data());
     }
     {
         q.setRecursive(true);
@@ -266,8 +266,8 @@ void RenamerCoreTest::parentFolderMethodTest1()
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p2>_\\2");
         QVERIFY(list.count() == 2);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC_parentFolderMethodTest1_2.txt");
-        QVERIFY(list[i++].to_ == "CCC_folder000_1.txt");
+        QVERIFY2(list[i++].to_ == "CCC_parentFolderMethodTest1_2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC_folder000_1.txt", list[i-1].to_.toLocal8Bit().data());
     }
     {
         q.setRecursive(true);
@@ -275,8 +275,8 @@ void RenamerCoreTest::parentFolderMethodTest1()
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p1>_<p2>_\\2");
         QVERIFY(list.count() == 2);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC_folder000_parentFolderMethodTest1_2.txt");
-        QVERIFY(list[i++].to_ == "CCC_folderAAA_folder000_1.txt");
+        QVERIFY2(list[i++].to_ == "CCC_folder000_parentFolderMethodTest1_2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC_folderAAA_folder000_1.txt", list[i-1].to_.toLocal8Bit().data());
     }
     {
         q.setRecursive(true);
@@ -284,8 +284,8 @@ void RenamerCoreTest::parentFolderMethodTest1()
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC_<p20>_\\2");
         QVERIFY(list.count() == 2);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC__2.txt");
-        QVERIFY(list[i++].to_ == "CCC__1.txt");
+        QVERIFY2(list[i++].to_ == "CCC__2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC__1.txt", list[i-1].to_.toLocal8Bit().data());
     }
 }
 
@@ -309,10 +309,10 @@ void RenamerCoreTest::renameCommandTest1()
         QList<Rename> list = q.getRenameList(testPath_, "(.*)AAA(.*)", "\\1CCC\\2");
         QVERIFY(list.count() == 4);
         int i = 0;
-        QVERIFY(list[i++].to_ == "CCC2.txt");
-        QVERIFY(list[i++].to_ == "CCC1.txt");
-        QVERIFY(list[i++].to_ == "folderCCC");
-        QVERIFY(list[i++].to_ == "folderCCC2");
+        QVERIFY2(list[i++].to_ == "CCC2.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "CCC1.txt", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC", list[i-1].to_.toLocal8Bit().data());
+        QVERIFY2(list[i++].to_ == "folderCCC2", list[i-1].to_.toLocal8Bit().data());
 
         RenameCommand command(list);
         command.redo();
